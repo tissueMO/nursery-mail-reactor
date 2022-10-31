@@ -37,6 +37,3 @@ package:
     - 'package.json'
     - 'yarn.lock'
     - '!serverless.yml'
-
-plugins:
-  - serverless-offline
