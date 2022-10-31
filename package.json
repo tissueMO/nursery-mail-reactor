@@ -13,5 +13,9 @@
   },
   "devDependencies": {
     "aws-sdk": "^2.1243.0"
+  },
+  "scripts": {
+    "deploy": "sls deploy --stage prod",
+    "destroy": "sls remove --stage prod"
   }
 }
