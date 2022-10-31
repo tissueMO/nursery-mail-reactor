@@ -1,0 +1,42 @@
+service: NersaryMailReactor
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  region: ap-northeast-1
+  runtime: nodejs16.x
+  endpointType: regional
+  logRetentionInDays: 7
+  deploymentBucket:
+    blockPublicAccess: true
+    serverSideEncryption: AES256
+  environment:
+    SERVICE: ${self:service}
+  iam:
+    role:
+      managedPolicies:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaRole
+
+functions:
+  Reactor:
+    handler: src/reactor.handler
+    timeout: 5
+    url:
+      cors: true
+    environment:
+      OPENBOT_FUNCTION: !Ref OpenBotLambdaFunction
+  OpenBot:
+    handler: src/openbot.handler
+    timeout: 30
+
+package:
+  patterns:
+    - 'node_modules/**'
+    - 'src/**'
+    - '!dist/**'
+    - 'package.json'
+    - 'yarn.lock'
+    - '!serverless.yml'
+
+plugins:
+  - serverless-offline
