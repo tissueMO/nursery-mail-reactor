@@ -28,6 +28,8 @@ functions:
   OpenBot:
     handler: src/openbot.handler
     timeout: 30
+    environment:
+      SLACK_BOT_USER_OAUTH_TOKEN: ${env:SLACK_BOT_USER_OAUTH_TOKEN}
 
 package:
   patterns:
