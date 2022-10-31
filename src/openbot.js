@@ -23,7 +23,7 @@ exports.handler = async ({ originalBody, openActionUrl }) => {
           .then((content) => content.trim())
           .then((content) => content === '受信メッセージ開封通知'),
     );
-    console.log('メール送信元への開封通知結果:', success);
+    console.log('メール送信元への開封通知結果:', success ? 'OK' : 'NG');
   })();
 
   // 開封済みを表すSlackリアクション
@@ -42,19 +42,6 @@ exports.handler = async ({ originalBody, openActionUrl }) => {
     });
     console.log('Slackへのリアクション結果:', status, data);
   })();
-
-  // 元のメッセージをアクション実行済みの状態へ更新
-  await axios.post(
-    responseUrl,
-    {
-      response_type: 'in_channel',
-      text: originalMessage.text,
-      attachments: [],
-    },
-    {
-      'Content-Type': 'application/json',
-    },
-  );
 
   return { statusCode: 200 };
 };
