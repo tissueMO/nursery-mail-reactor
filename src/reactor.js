@@ -47,18 +47,29 @@ const parseBody = ({ body, isBase64Encoded }) => {
  * @returns
  */
 const executeOpenMailAction = async (body, { needsReaction, openActionUrl }) => {
-  if (needsReaction) {
-    await lambda
-      .invoke({
-        FunctionName: process.env.OPENBOT_FUNCTION,
-        InvocationType: 'Event',
-        Payload: JSON.stringify({
-          originalBody: body,
-          openActionUrl,
-        }),
-      })
-      .promise();
+  if (!needsReaction) {
+    return {
+      statusCode: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        text: body.text,
+        attachments: [],
+      }),
+    };
   }
+
+  await lambda
+    .invoke({
+      FunctionName: process.env.OPENBOT_FUNCTION,
+      InvocationType: 'Event',
+      Payload: JSON.stringify({
+        originalBody: body,
+        openActionUrl,
+      }),
+    })
+    .promise();
 
   return { statusCode: 200 };
 };
