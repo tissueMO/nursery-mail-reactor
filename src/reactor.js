@@ -54,7 +54,7 @@ const executeOpenMailAction = async (body, { needsReaction, openActionUrl }) => 
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        text: body.text,
+        text: body.original_message.text,
         attachments: [],
       }),
     };

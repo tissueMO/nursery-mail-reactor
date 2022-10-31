@@ -10,57 +10,60 @@ exports.handler = async ({ originalBody, openActionUrl }) => {
     response_url: responseUrl,
   } = originalBody;
 
-  await Promise.all([
-    // 開封済みを送信
-    (async () => {
-      const success = await runBrowser(
-        openActionUrl,
-        async (page) =>
-          await page
-            .$('#page_title')
-            .then((element) => element.textContent())
-            .then((content) => content.trim())
-            .then((content) => content === '受信メッセージ開封通知'),
-      );
-      console.log('メール送信元への開封通知結果:', success);
-    })(),
+  console.log('開封URL:', openActionUrl);
 
-    // 開封済みのSlackリアクション
-    (async () => {
-      const { status, data } = await axios.request({
-        url: 'https://slack.com/api/reactions.add',
-        method: 'POST',
-        data: {
-          channel: channel.id,
-          timestamp: messageTimestamp,
-          name: 'mailbox_with_no_mail',
-        },
-        headers: {
-          Authorization: `Bearer ${process.env.SLACK_BOT_USER_OAUTH_TOKEN}`,
-        },
-      });
-      console.log('Slackへのリアクション結果:', status, data);
-    })(),
+  // メールを開封済みにする
+  await (async () => {
+    const success = await runBrowser(
+      openActionUrl,
+      async (page) =>
+        await page
+          .$('#page_title')
+          .then((element) => element.textContent())
+          .then((content) => content.trim())
+          .then((content) => content === '受信メッセージ開封通知'),
+    );
+    console.log('メール送信元への開封通知結果:', success);
+  })();
 
-    // 元のメッセージをアクション実行済みの状態へ更新
-    axios.post(
-      responseUrl,
-      {
-        response_type: 'in_channel',
-        text: originalMessage.text,
-        attachments: [],
+  // 開封済みを表すSlackリアクション
+  await (async () => {
+    const { status, data } = await axios.request({
+      url: 'https://slack.com/api/reactions.add',
+      method: 'POST',
+      data: {
+        channel: channel.id,
+        timestamp: messageTimestamp,
+        name: 'mailbox_with_no_mail',
       },
-      {
-        'Content-Type': 'application/json',
+      headers: {
+        Authorization: `Bearer ${process.env.SLACK_BOT_USER_OAUTH_TOKEN}`,
       },
-    ),
-  ]);
+    });
+    console.log('Slackへのリアクション結果:', status, data);
+  })();
+
+  // 元のメッセージをアクション実行済みの状態へ更新
+  await axios.post(
+    responseUrl,
+    {
+      response_type: 'in_channel',
+      text: originalMessage.text,
+      attachments: [],
+    },
+    {
+      'Content-Type': 'application/json',
+    },
+  );
+
+  return { statusCode: 200 };
 };
 
 /**
  * ヘッドレスブラウザーで任意の操作を行います。
  * @param {string} url
  * @param {function(Page): any} callback
+ * @return {Promise<*>}
  */
 const runBrowser = async (url, callback = null) => {
   console.log('Chromium: ヘッドレスブラウザーを初期化します...');
