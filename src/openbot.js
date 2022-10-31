@@ -76,7 +76,6 @@ const runBrowser = async (url, callback = null) => {
 
   console.log('Chromium: 最初のページへ遷移します...');
   await page.goto(url);
-  await page.waitForNavigation({ timeout: 5000 });
 
   console.log('Chromium: 任意の処理を実行します...');
   return await callback?.(page);
