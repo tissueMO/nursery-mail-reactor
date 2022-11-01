@@ -4,24 +4,16 @@ const { runBrowser } = require('./common/browser');
 
 /**
  * 保育園からのメールの添付ファイルをSlackに添付します。
- * @param {*} event API Gateway ペイロード形式 2.0
+ * @param {Object} event
+ * @param {string} event.threadTimestamp
+ * @param {string} event.attachmentsUrl
  */
-exports.handler = async ({ body, isBase64Encoded }) => {
-  if (isBase64Encoded) {
-    body = Buffer.from(body, 'base64').toString();
-  }
-
-  body = JSON.parse(body);
-  const { threadTimestamp, attachmentsUrl } = body;
-  console.log('Slackスレッドタイムスタンプ:', threadTimestamp);
-  console.log('添付ファイル閲覧ページURL:', attachmentsUrl);
-
-  // 添付ファイルをすべてダウンロードしてSlackへ送信
+exports.handler = async ({ threadTimestamp, attachmentsUrl }) => {
   await runBrowser(attachmentsUrl, async (page) => {
     const downloadLinks = await page.$$('.file_download_col .download_link');
-    const fileNames = await Promise.all(
-      (await page.$$('td.file_name_col')).map((element) => element.textContent()).map((fileName) => fileName.trim()),
-    );
+    const fileNames = (
+      await Promise.all((await page.$$('td.file_name_col')).map((element) => element.textContent()))
+    ).map((fileName) => fileName.trim());
 
     for (const [i, link] of downloadLinks.entries()) {
       const [download] = await Promise.all([page.waitForEvent('download'), link.click()]);

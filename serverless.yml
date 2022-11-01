@@ -30,12 +30,17 @@ functions:
     handler: src/openbot.handler
     timeout: 30
     memorySize: 1024
-  AttachmentBot:
-    handler: src/attachmentbot.handler
-    timeout: 30
-    memorySize: 1024
+  Attachment:
+    handler: src/attachment.handler
+    timeout: 5
     url:
       cors: true
+    environment:
+      ATTACHMENTBOT_FUNCTION: !Ref AttachmentBotLambdaFunction
+  AttachmentBot:
+    handler: src/attachmentbot.handler
+    timeout: 60
+    memorySize: 1024
 
 package:
   patterns:
