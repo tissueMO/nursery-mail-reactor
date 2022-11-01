@@ -4,12 +4,16 @@ const { runBrowser } = require('./common/browser');
 
 /**
  * 保育園からのメールの添付ファイルをSlackに添付します。
- * @param {Object} event
- * @param {string} event.threadTimestamp
- * @param {string} event.attachmentsUrl
- * @returns
+ * @param {*} event API Gateway ペイロード形式 2.0
  */
-exports.handler = async ({ threadTimestamp, attachmentsUrl }) => {
+exports.handler = async ({ body, isBase64Encoded }) => {
+  if (isBase64Encoded) {
+    body = Buffer.from(body, 'base64').toString();
+  }
+
+  body = JSON.parse(body);
+  const { threadTimestamp, attachmentsUrl } = body;
+  console.log('Slackスレッドタイムスタンプ:', threadTimestamp);
   console.log('添付ファイル閲覧ページURL:', attachmentsUrl);
 
   // 添付ファイルをすべてダウンロードしてSlackへ送信
