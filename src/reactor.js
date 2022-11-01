@@ -2,6 +2,10 @@ const aws = require('aws-sdk');
 
 const lambda = new aws.Lambda();
 
+/**
+ * Slackから呼び出される任意のインタラクティブ操作に応答します。
+ * @param {Object} event
+ */
 exports.handler = async (event) => {
   const body = parseBody(event);
   console.log('Slackからのリクエスト内容:', body);

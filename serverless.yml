@@ -12,6 +12,7 @@ provider:
     serverSideEncryption: AES256
   environment:
     SERVICE: ${self:service}
+    SLACK_BOT_USER_OAUTH_TOKEN: ${env:SLACK_BOT_USER_OAUTH_TOKEN}
   iam:
     role:
       managedPolicies:
@@ -29,8 +30,12 @@ functions:
     handler: src/openbot.handler
     timeout: 30
     memorySize: 1024
-    environment:
-      SLACK_BOT_USER_OAUTH_TOKEN: ${env:SLACK_BOT_USER_OAUTH_TOKEN}
+  AttachmentBot:
+    handler: src/attachmentbot.handler
+    timeout: 30
+    memorySize: 1024
+    url:
+      cors: true
 
 package:
   patterns:
