@@ -27,7 +27,7 @@ exports.handler = async ({ channelId, threadTimestamp, attachmentsUrl }) => {
       await link.click({ force: true });
 
       // [200] ファイルダウンロード
-      const response = await page.waitForResponse((response) =>
+      const response = await context.waitForEvent('response', (response) =>
         response.url().startsWith('https://jmobile-mail.jp/download/file' && response.status() === 200),
       );
       console.log(`[#${i + 1}] ダウンロードファイル名:`, fileNames[i]);
