@@ -26,14 +26,19 @@ exports.handler = async ({ channelId, threadTimestamp, attachmentsUrl }) => {
     for (const [i, link] of downloadLinks.entries()) {
       await link.click({ force: true });
 
-      // [200] ファイルダウンロード
-      const response = await context.waitForEvent('response', (response) =>
-        response.url().startsWith('https://jmobile-mail.jp/download/file' && response.status() === 200),
-      );
-      console.log(`[#${i + 1}] ダウンロードファイル名:`, fileNames[i]);
+      // [302] ダウンロード先へリダイレクト
+      await context.waitForEvent('response');
 
+      // [200] ファイルダウンロード
+      const response = await context.waitForEvent('response');
+      console.log(`[#${i + 1}] ダウンロードファイル名:`, fileNames[i]);
+      console.log(`[#${i + 1}] ダウンロード結果:`, response.status(), response.url());
+
+      // 添付ファイルとして送信
       const form = new FormData();
-      form.append('file', await response.body());
+      const file = await response.body();
+      console.log(file);
+      form.append('file', file);
       form.append('filename', fileNames[i]);
       form.append('filetype', 'pdf');
       form.append('channels', channelId);
@@ -48,6 +53,7 @@ exports.handler = async ({ channelId, threadTimestamp, attachmentsUrl }) => {
           ...form.getHeaders(),
         },
       });
+
       console.log(`[#${i + 1}] Slackへのアップロード結果:`, status, data);
     }
   });
