@@ -10,7 +10,7 @@ const { runBrowser } = require('./common/browser');
  * @param {string} event.attachmentsUrl
  */
 exports.handler = async ({ channelId, threadTimestamp, attachmentsUrl }) => {
-  await runBrowser(attachmentsUrl, async ({ page }) => {
+  await runBrowser(attachmentsUrl, async ({ context, page }) => {
     const attachmentsAccordion = await page.$('.title_letter_attach_files_area');
     const agreePolicyCheckBox = await page.$('#user_policy');
     const downloadLinks = await page.$$('.file_download_col .download_link');
@@ -25,20 +25,17 @@ exports.handler = async ({ channelId, threadTimestamp, attachmentsUrl }) => {
 
     for (const [i, link] of downloadLinks.entries()) {
       await link.click({ force: true });
-      const download = await page.waitForEvent('download');
+      // const download = await page.waitForEvent('download');
+      const response = await context.waitForEvent('response');
+      console.log(response);
 
       console.log(`[#${i + 1}] ダウンロードファイル名:`, fileNames[i]);
       console.log(`[#${i + 1}] ダウンロードファイルパス:`, await download.path());
 
       const form = new FormData();
-      // form.append('file', await page.screenshot({ fullPage: true }), {
-      //   contentType: 'image/png',
-      //   filename: 'screenshot.png',
-      // });
       form.append('file', await download.createReadStream());
       form.append('filename', fileNames[i]);
-      form.append('filetype', 'pdf');
-      // form.append('filetype', 'png');
+      // form.append('filetype', 'pdf');
       form.append('channels', channelId);
       form.append('thread_ts', threadTimestamp);
 
