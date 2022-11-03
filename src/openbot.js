@@ -17,7 +17,7 @@ exports.handler = async ({ originalBody, openActionUrl }) => {
   await (async () => {
     const success = await runBrowser(
       openActionUrl,
-      async (page) =>
+      async ({ page }) =>
         await page
           .$('#page_title')
           .then((element) => element.textContent())

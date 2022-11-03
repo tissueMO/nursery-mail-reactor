@@ -21,5 +21,5 @@ exports.runBrowser = async (url, callback = null) => {
   await page.goto(url);
 
   console.log('Chromium: 任意の処理を実行します...');
-  return await callback?.(page);
+  return await callback?.({ context, page });
 };

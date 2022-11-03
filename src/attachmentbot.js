@@ -9,14 +9,15 @@ const { runBrowser } = require('./common/browser');
  * @param {string} event.attachmentsUrl
  */
 exports.handler = async ({ threadTimestamp, attachmentsUrl }) => {
-  await runBrowser(attachmentsUrl, async (page) => {
+  await runBrowser(attachmentsUrl, async ({ context, page }) => {
     const downloadLinks = await page.$$('.file_download_col .download_link');
     const fileNames = (
       await Promise.all((await page.$$('td.file_name_col')).map((element) => element.textContent()))
     ).map((fileName) => fileName.trim());
 
     for (const [i, link] of downloadLinks.entries()) {
-      const [download] = await Promise.all([page.waitForEvent('download'), link.click()]);
+      const [newPage] = await Promise.all([context.waitForEvent('page'), link.click()]);
+      const download = await newPage.waitForEvent('download');
       console.log(`[#${i + 1}] ダウンロードファイル名:`, fileNames[i]);
       console.log(`[#${i + 1}] ダウンロードファイルパス:`, await download.path());
 
