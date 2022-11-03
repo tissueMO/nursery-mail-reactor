@@ -30,7 +30,10 @@ exports.handler = async ({ threadTimestamp, attachmentsUrl }) => {
       // console.log(`[#${i + 1}] ダウンロードファイルパス:`, await download.path());
 
       const form = new FormData();
-      form.append('file', await page.screenshot({ fullPage: true }));
+      form.append('file', await page.screenshot({ fullPage: true }), {
+        contentType: 'image/png',
+        filename: 'screenshot.png',
+      });
       // form.append('file', await download.createReadStream());
       form.append('filename', fileNames[i]);
       form.append('thread_ts', threadTimestamp);
