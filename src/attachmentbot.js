@@ -25,18 +25,20 @@ exports.handler = async ({ channelId, threadTimestamp, attachmentsUrl }) => {
 
     for (const [i, link] of downloadLinks.entries()) {
       await link.click({ force: true });
-      // const [download] = await Promise.all([page.waitForEvent('download'), link.click({ force: true })]);
+      const download = await page.waitForEvent('download');
 
       console.log(`[#${i + 1}] ダウンロードファイル名:`, fileNames[i]);
-      // console.log(`[#${i + 1}] ダウンロードファイルパス:`, await download.path());
+      console.log(`[#${i + 1}] ダウンロードファイルパス:`, await download.path());
 
       const form = new FormData();
-      form.append('file', await page.screenshot({ fullPage: true }), {
-        contentType: 'image/png',
-        filename: 'screenshot.png',
-      });
-      // form.append('file', await download.createReadStream());
+      // form.append('file', await page.screenshot({ fullPage: true }), {
+      //   contentType: 'image/png',
+      //   filename: 'screenshot.png',
+      // });
+      form.append('file', await download.createReadStream());
       form.append('filename', fileNames[i]);
+      form.append('filetype', 'pdf');
+      // form.append('filetype', 'png');
       form.append('channels', channelId);
       form.append('thread_ts', threadTimestamp);
 
