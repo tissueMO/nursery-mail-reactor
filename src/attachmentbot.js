@@ -27,9 +27,9 @@ exports.handler = async ({ channelId, threadTimestamp, attachmentsUrl }) => {
       await link.click({ force: true });
       // const download = await page.waitForEvent('download');
       const response = await context.waitForEvent('response');
-      console.log(response.status, response.url);
+      console.log(response.status(), response.url());
       const response2 = await context.waitForEvent('response');
-      console.log(response2.status, response2.url);
+      console.log(response2.status(), response2.url());
 
       console.log(`[#${i + 1}] ダウンロードファイル名:`, fileNames[i]);
       console.log(`[#${i + 1}] ダウンロードファイルパス:`, await download.path());
