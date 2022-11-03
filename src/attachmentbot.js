@@ -24,18 +24,7 @@ exports.handler = async ({ channelId, threadTimestamp, attachmentsUrl }) => {
     await agreePolicyCheckBox.dispatchEvent('change');
 
     for (const [i, link] of downloadLinks.entries()) {
-      await link.click({ force: true });
-
-      // [302] ダウンロード先へリダイレクト
-      const res = await context.waitForEvent('response');
-      console.log(JSON.stringify(res));
-
-      // [200] ファイルダウンロード
-      const response = await context.waitForEvent('response');
-
-      // ダウンロードファイルを取得
-      await page.goto('about:blank');
-      const [download] = await Promise.all([page.waitForEvent('download'), page.goto(response.url())]);
+      const [download] = await Promise.all([page.waitForEvent('download'), link.click({ force: true })]);
       console.log(`[#${i + 1}] ダウンロードファイル名:`, fileNames[i]);
 
       // 添付ファイルとして送信
