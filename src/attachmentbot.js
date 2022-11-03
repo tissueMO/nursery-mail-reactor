@@ -5,10 +5,11 @@ const { runBrowser } = require('./common/browser');
 /**
  * 保育園からのメールの添付ファイルをSlackに添付します。
  * @param {Object} event
+ * @param {string} event.channelId
  * @param {string} event.threadTimestamp
  * @param {string} event.attachmentsUrl
  */
-exports.handler = async ({ threadTimestamp, attachmentsUrl }) => {
+exports.handler = async ({ channelId, threadTimestamp, attachmentsUrl }) => {
   await runBrowser(attachmentsUrl, async ({ page }) => {
     const attachmentsAccordion = await page.$('.title_letter_attach_files_area');
     const agreePolicyCheckBox = await page.$('#user_policy');
@@ -36,7 +37,8 @@ exports.handler = async ({ threadTimestamp, attachmentsUrl }) => {
       });
       // form.append('file', await download.createReadStream());
       form.append('filename', fileNames[i]);
-      // form.append('thread_ts', threadTimestamp);
+      form.append('channels', channelId);
+      form.append('thread_ts', threadTimestamp);
 
       const { status, data } = await axios.request({
         url: 'https://slack.com/api/files.upload',

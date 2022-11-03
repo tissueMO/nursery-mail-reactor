@@ -12,7 +12,8 @@ exports.handler = async ({ body, isBase64Encoded }) => {
   }
 
   body = JSON.parse(body);
-  const { threadTimestamp, attachmentsUrl } = body;
+  const { channelId, threadTimestamp, attachmentsUrl } = body;
+  console.log('SlackチャンネルID:', channelId);
   console.log('Slackスレッドタイムスタンプ:', threadTimestamp);
   console.log('添付ファイル閲覧ページURL:', attachmentsUrl);
 
