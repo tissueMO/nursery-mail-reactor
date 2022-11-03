@@ -29,12 +29,15 @@ exports.handler = async ({ channelId, threadTimestamp, attachmentsUrl }) => {
       // [302] ダウンロード先へリダイレクト
       await context.waitForEvent('response');
 
-      const response = await context.waitForEvent('response');
-      console.log(`[#${i + 1}] ダウンロード結果:`, response.status(), response.url());
+      // const response = await context.waitForEvent('response');
+      // console.log(`[#${i + 1}] ダウンロード結果:`, response.status(), response.url());
+      const download = await page.waitForEvent('download');
       console.log(`[#${i + 1}] ダウンロードファイル名:`, fileNames[i]);
+      console.log(`[#${i + 1}] ダウンロードURL:`, download.url());
 
       const form = new FormData();
-      form.append('file', await response.body());
+      // form.append('file', await response.body());
+      form.append('file', await download.createReadStream());
       form.append('filename', fileNames[i]);
       form.append('filetype', 'pdf');
       form.append('channels', channelId);
