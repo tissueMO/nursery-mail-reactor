@@ -13,6 +13,7 @@ exports.runBrowser = async (url, callback = null) => {
   const context = await browser.newContext({
     locale: 'ja',
     viewport: { width: 1920, height: 1080 },
+    acceptDownloads: true,
   });
   const page = await context.newPage();
 
