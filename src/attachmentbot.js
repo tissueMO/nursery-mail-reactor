@@ -10,17 +10,19 @@ const { runBrowser } = require('./common/browser');
  */
 exports.handler = async ({ threadTimestamp, attachmentsUrl }) => {
   await runBrowser(attachmentsUrl, async ({ context, page }) => {
+    const attachmentsAccordion = await page.$('.title_letter_attach_files_area');
+    const agreePolicyCheckBox = await page.$('#user_policy');
     const downloadLinks = await page.$$('.file_download_col .download_link');
     const fileNames = (
       await Promise.all((await page.$$('td.file_name_col')).map((element) => element.textContent()))
     ).map((fileName) => fileName.trim());
 
+    // ダウンロードリンクを表示させる
+    await attachmentsAccordion.click();
+    await agreePolicyCheckBox.check();
+    await agreePolicyCheckBox.dispatchEvent('change');
+
     for (const [i, link] of downloadLinks.entries()) {
-      // const [newPage] = await Promise.all([
-      //   context.waitForEvent('page'),
-      //   link.click(await link.click({ force: true })),
-      // ]);
-      // const download = await newPage.waitForEvent('download');
       const [download] = await Promise.all([page.waitForEvent('download'), link.click({ force: true })]);
 
       console.log(`[#${i + 1}] ダウンロードファイル名:`, fileNames[i]);
