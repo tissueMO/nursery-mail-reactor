@@ -16,8 +16,12 @@ exports.handler = async ({ threadTimestamp, attachmentsUrl }) => {
     ).map((fileName) => fileName.trim());
 
     for (const [i, link] of downloadLinks.entries()) {
-      const [newPage] = await Promise.all([context.waitForEvent('page'), link.click()]);
-      const download = await newPage.waitForEvent('download');
+      const response = await Promise.all([context.waitForEvent('response'), link.click()]);
+      console.log(response);
+      const download = null;
+      // const [newPage] = await Promise.all([context.waitForEvent('page'), link.click()]);
+      // const download = await newPage.waitForEvent('download');
+
       console.log(`[#${i + 1}] ダウンロードファイル名:`, fileNames[i]);
       console.log(`[#${i + 1}] ダウンロードファイルパス:`, await download.path());
 
