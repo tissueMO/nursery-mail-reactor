@@ -26,18 +26,14 @@ exports.handler = async ({ channelId, threadTimestamp, attachmentsUrl }) => {
     for (const [i, link] of downloadLinks.entries()) {
       await link.click({ force: true });
 
-      // [302] ダウンロード先へリダイレクト
-      await context.waitForEvent('response');
-
-      // const response = await context.waitForEvent('response');
-      // console.log(`[#${i + 1}] ダウンロード結果:`, response.status(), response.url());
-      const download = await page.waitForEvent('download');
+      // [200] ファイルダウンロード
+      const response = await page.waitForResponse((response) =>
+        response.url().startsWith('https://jmobile-mail.jp/download/file' && response.status() === 200),
+      );
       console.log(`[#${i + 1}] ダウンロードファイル名:`, fileNames[i]);
-      console.log(`[#${i + 1}] ダウンロードURL:`, download.url());
 
       const form = new FormData();
-      // form.append('file', await response.body());
-      form.append('file', await download.createReadStream());
+      form.append('file', await response.body());
       form.append('filename', fileNames[i]);
       form.append('filetype', 'pdf');
       form.append('channels', channelId);
