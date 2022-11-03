@@ -27,7 +27,7 @@ exports.handler = async ({ threadTimestamp, attachmentsUrl }) => {
       // const [download] = await Promise.all([page.waitForEvent('download'), link.click({ force: true })]);
 
       console.log(`[#${i + 1}] ダウンロードファイル名:`, fileNames[i]);
-      console.log(`[#${i + 1}] ダウンロードファイルパス:`, await download.path());
+      // console.log(`[#${i + 1}] ダウンロードファイルパス:`, await download.path());
 
       const form = new FormData();
       form.append('file', await page.screenshot({ fullPage: true }));
