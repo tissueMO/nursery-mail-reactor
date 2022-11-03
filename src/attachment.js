@@ -22,6 +22,7 @@ exports.handler = async ({ body, isBase64Encoded }) => {
       FunctionName: process.env.ATTACHMENTBOT_FUNCTION,
       InvocationType: 'Event',
       Payload: JSON.stringify({
+        channelId,
         threadTimestamp,
         attachmentsUrl,
       }),
