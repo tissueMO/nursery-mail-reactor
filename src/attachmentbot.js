@@ -34,16 +34,12 @@ exports.handler = async ({ channelId, threadTimestamp, attachmentsUrl }) => {
       const response = await context.waitForEvent('response');
 
       // ダウンロードファイルを取得
-      const newPage = await context.newPage();
-      await newPage.goto('about:blank');
-      const [download] = await Promise.all([newPage.waitForEvent('download'), page.goto(response.url())]);
+      await page.goto('about:blank');
+      const [download] = await Promise.all([page.waitForEvent('download'), page.goto(response.url())]);
       console.log(`[#${i + 1}] ダウンロードファイル名:`, fileNames[i]);
 
       // 添付ファイルとして送信
       const form = new FormData();
-      // const file = await response.body();
-      // console.log(file);
-      // form.append('file', file);
       form.append('file', await download.createReadStream());
       form.append('filename', fileNames[i]);
       form.append('filetype', 'pdf');
