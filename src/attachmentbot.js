@@ -16,35 +16,12 @@ exports.handler = async ({ threadTimestamp, attachmentsUrl }) => {
     ).map((fileName) => fileName.trim());
 
     for (const [i, link] of downloadLinks.entries()) {
-      page.on('console', async (message) => {
-        const values = [];
-        for (const arg of message.args) {
-          values.push(await arg.jsonValue());
-        }
-        console.log(...values);
-      });
-
-      await link.click();
-      const formTest = new FormData();
-      formTest.append('file', await page.screenshot({ fullPage: true }));
-      formTest.append('filename', fileNames[i]);
-      formTest.append('thread_ts', threadTimestamp);
-      const { statusTest, dataTest } = await axios.request({
-        url: 'https://slack.com/api/files.upload',
-        method: 'POST',
-        data: formTest,
-        headers: {
-          Authorization: `Bearer ${process.env.SLACK_BOT_USER_OAUTH_TOKEN}`,
-          ...form.getHeaders(),
-        },
-      });
-      console.log(`[#${i + 1}] Slackへのアップロード結果:`, statusTest, dataTest);
-
-      const response = await Promise.all([context.waitForEvent('response'), link.click()]);
-      console.log(response);
-      const download = null;
-      // const [newPage] = await Promise.all([context.waitForEvent('page'), link.click()]);
+      // const [newPage] = await Promise.all([
+      //   context.waitForEvent('page'),
+      //   link.click(await link.click({ force: true })),
+      // ]);
       // const download = await newPage.waitForEvent('download');
+      const [download] = await Promise.all([page.waitForEvent('download'), link.click({ force: true })]);
 
       console.log(`[#${i + 1}] ダウンロードファイル名:`, fileNames[i]);
       console.log(`[#${i + 1}] ダウンロードファイルパス:`, await download.path());
