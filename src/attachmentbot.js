@@ -23,13 +23,15 @@ exports.handler = async ({ threadTimestamp, attachmentsUrl }) => {
     await agreePolicyCheckBox.dispatchEvent('change');
 
     for (const [i, link] of downloadLinks.entries()) {
-      const [download] = await Promise.all([page.waitForEvent('download'), link.click({ force: true })]);
+      await link.click({ force: true });
+      // const [download] = await Promise.all([page.waitForEvent('download'), link.click({ force: true })]);
 
       console.log(`[#${i + 1}] ダウンロードファイル名:`, fileNames[i]);
       console.log(`[#${i + 1}] ダウンロードファイルパス:`, await download.path());
 
       const form = new FormData();
-      form.append('file', await download.createReadStream());
+      form.append('file', await download.screenshot());
+      // form.append('file', await download.createReadStream());
       form.append('filename', fileNames[i]);
       form.append('thread_ts', threadTimestamp);
 
