@@ -9,7 +9,7 @@ const { runBrowser } = require('./common/browser');
  * @param {string} event.attachmentsUrl
  */
 exports.handler = async ({ threadTimestamp, attachmentsUrl }) => {
-  await runBrowser(attachmentsUrl, async ({ context, page }) => {
+  await runBrowser(attachmentsUrl, async ({ page }) => {
     const attachmentsAccordion = await page.$('.title_letter_attach_files_area');
     const agreePolicyCheckBox = await page.$('#user_policy');
     const downloadLinks = await page.$$('.file_download_col .download_link');
@@ -36,7 +36,7 @@ exports.handler = async ({ threadTimestamp, attachmentsUrl }) => {
       });
       // form.append('file', await download.createReadStream());
       form.append('filename', fileNames[i]);
-      form.append('thread_ts', threadTimestamp);
+      // form.append('thread_ts', threadTimestamp);
 
       const { status, data } = await axios.request({
         url: 'https://slack.com/api/files.upload',
