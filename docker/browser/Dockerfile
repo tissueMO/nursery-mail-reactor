@@ -9,8 +9,8 @@ RUN npm install -g yarn
 WORKDIR ${LAMBDA_TASK_ROOT}
 COPY package.json ${LAMBDA_TASK_ROOT}
 COPY yarn.lock ${LAMBDA_TASK_ROOT}
-COPY src ${LAMBDA_TASK_ROOT}
-COPY node_modules ${LAMBDA_TASK_ROOT}
+COPY src/ ${LAMBDA_TASK_ROOT}/src
+COPY node_modules ${LAMBDA_TASK_ROOT}/node_modules
 
 # Browser
 RUN yarn playwright install chromium
