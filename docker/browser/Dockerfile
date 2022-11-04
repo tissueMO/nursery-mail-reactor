@@ -1,19 +1,15 @@
 FROM public.ecr.aws/lambda/nodejs:16
 
-ARG FUNCTION_DIR="/app"
+ARG LAMBDA_TASK_ROOT="/app"
 ENV PLAYWRIGHT_BROWSERS_PATH=0
 
 # Source App
-WORKDIR $FUNCTION_DIR
-COPY src .
-COPY node_modules .
+COPY package.json ${LAMBDA_TASK_ROOT}
+COPY yarn.lock ${LAMBDA_TASK_ROOT}
+COPY src ${LAMBDA_TASK_ROOT}
+COPY node_modules ${LAMBDA_TASK_ROOT}
 
-# Chromium
-RUN apt-get update && \apt-get install -y --no-install-recommends \
-  libnss3 \
-  libxss1 \
-  libasound2 \
-  fonts-noto-color-emoji \
-  libxtst6
+# Browser
+RUN yarn playwright install chromium
 
 CMD ["index.handler"]
