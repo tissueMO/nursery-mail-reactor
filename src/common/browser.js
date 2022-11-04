@@ -1,20 +1,23 @@
-const playwright = require('playwright');
+const { Page, chromium } = require('playwright-core');
+const awsChromium = require('chrome-aws-lambda');
 
 /**
  * ヘッドレスブラウザーで任意の操作を行います。
  * @param {string} url
- * @param {function(playwright.Page): any} callback
+ * @param {function(Page): any} callback
  * @return {Promise<*>}
  */
 exports.runBrowser = async (url, callback = null) => {
   console.log('Chromium: ヘッドレスブラウザーを初期化します...');
-  const browser = await playwright.chromium.launch();
-  const context = await browser.newContext({
+  const browser = await chromium.launch({
+    executablePath: await awsChromium.executablePath,
+    downloadsPath: '/tmp',
+  });
+  const page = await browser.newPage({
     locale: 'ja',
     viewport: { width: 1920, height: 1080 },
     acceptDownloads: true,
   });
-  const page = await context.newPage();
 
   console.log('Chromium: 最初のページへ遷移します...');
   await page.goto(url);

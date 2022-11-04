@@ -17,11 +17,6 @@ provider:
     role:
       managedPolicies:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaRole
-  ecr:
-    images:
-      browser:
-        path: .
-        file: docker/browser/Dockerfile
 
 functions:
   Reactor:
@@ -32,11 +27,9 @@ functions:
     environment:
       OPENBOT_FUNCTION: !Ref OpenBotLambdaFunction
   OpenBot:
+    handler: src/openbot.handler
     timeout: 15
     memorySize: 1024
-    image:
-      name: browser
-      command: ['src/openbot.handler']
   Attachment:
     handler: src/attachment.handler
     timeout: 5
@@ -45,11 +38,9 @@ functions:
     environment:
       ATTACHMENTBOT_FUNCTION: !Ref AttachmentBotLambdaFunction
   AttachmentBot:
+    handler: src/attachmentbot.handler
     timeout: 30
     memorySize: 1024
-    image:
-      name: browser
-      command: ['src/attachmentbot.handler']
 
 package:
   patterns:
