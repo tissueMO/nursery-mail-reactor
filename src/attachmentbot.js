@@ -10,7 +10,7 @@ const { runBrowser } = require('./common/browser');
  * @param {string} event.attachmentsUrl
  */
 exports.handler = async ({ channelId, threadTimestamp, attachmentsUrl }) => {
-  await runBrowser(attachmentsUrl, async ({ context, page }) => {
+  await runBrowser(attachmentsUrl, async ({ page }) => {
     const attachmentsAccordion = await page.$('.title_letter_attach_files_area');
     const agreePolicyCheckBox = await page.$('#user_policy');
     const downloadLinks = await page.$$('.file_download_col .download_link');
