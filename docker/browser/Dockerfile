@@ -3,9 +3,10 @@ FROM public.ecr.aws/lambda/nodejs:16
 ARG LAMBDA_TASK_ROOT="/app"
 ENV PLAYWRIGHT_BROWSERS_PATH=0
 
+# Browser Depencencies
 RUN npm install -g yarn
 RUN yum install -y \
-  atk cups-libs libdrm dbus-libs at-spi2-core \
+  atk at-spi2-atk cups-libs libdrm dbus-libs at-spi2-core \
   libX11 libXcomposite libXdamage libXext libXfixes libXrandr mesa-libgbm libxcb libxkbcommon \
   pango cairo alsa-lib libwayland-client
 
