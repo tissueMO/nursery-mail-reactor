@@ -10,8 +10,8 @@ const awsChromium = require('chrome-aws-lambda');
 exports.runBrowser = async (url, callback = null) => {
   console.log('Chromium: ヘッドレスブラウザーを初期化します...');
   const browser = await chromium.launch({
+    args: awsChromium.args,
     executablePath: await awsChromium.executablePath,
-    downloadsPath: '/tmp',
   });
   const page = await browser.newPage({
     locale: 'ja',
