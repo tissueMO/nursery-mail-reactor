@@ -1,5 +1,5 @@
 const { Page, chromium } = require('playwright-core');
-const awsChromium = require('chrome-aws-lambda');
+const awsChromium = require('@sparticuz/chromium');
 
 /**
  * ヘッドレスブラウザーで任意の操作を行います。
