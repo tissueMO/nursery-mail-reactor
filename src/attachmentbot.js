@@ -1,3 +1,4 @@
+const fs = require('fs');
 const axios = require('axios');
 const FormData = require('form-data');
 const { runBrowser } = require('./common/browser');
@@ -29,7 +30,8 @@ exports.handler = async ({ channelId, threadTimestamp, attachmentsUrl }) => {
 
       // 添付ファイルとして送信
       const form = new FormData();
-      const file = await download.createReadStream();
+      // const file = await download.createReadStream();
+      const file = fs.createReadStream(await download.path());
       console.log(`[#${i + 1}] ダウンロードファイル:`, download);
       console.log(`[#${i + 1}] ダウンロードファイルストリーム:`, file);
       form.append('file', file);
