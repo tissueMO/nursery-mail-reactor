@@ -29,7 +29,10 @@ exports.handler = async ({ channelId, threadTimestamp, attachmentsUrl }) => {
 
       // 添付ファイルとして送信
       const form = new FormData();
-      form.append('file', await download.createReadStream());
+      const file = await download.createReadStream();
+      console.log(`[#${i + 1}] ダウンロードファイル:`, download);
+      console.log(`[#${i + 1}] ダウンロードファイルストリーム:`, file);
+      form.append('file', file);
       form.append('filename', fileNames[i]);
       form.append('filetype', 'pdf');
       form.append('channels', channelId);
