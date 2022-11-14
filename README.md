@@ -25,11 +25,7 @@
     - Lambda 関数URL (添付ファイル)
     - Slack 投稿チャンネル名
     - Slack Bot User OAuth Token
-        - `chat:write`
-        - `files:write`
-        - `incoming-webhook`
-        - `reactions:write`
-1. Slack Apps でアプリを作成してワークスペースにインストール
+1. Slack Apps アプリを作成してインストール
     - OAuth & Permissions
         - Slack Bot User OAuth Token
             - `chat:write`
